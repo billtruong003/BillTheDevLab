@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react';
-import { getPostBySlug, getAllPostSlugs } from '@/lib/mdx/mdx.service';
+import { getPostBySlug, getAllPostSlugs, getAvailableLanguages } from '@/lib/mdx/mdx.service';
 import { mdxComponents } from '@/app/_components/mdx';
 import { ViewCounter } from '@/app/_components/ui/view-counter';
 import { ViewTracker } from './view-tracker';
@@ -14,15 +14,19 @@ export const revalidate = 3600;
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
 }
 
 export async function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug, mdxComponents);
+  const { lang } = await searchParams;
+  const currentLang = (lang === 'vi' ? 'vi' : 'en') as 'vi' | 'en';
+
+  const post = await getPostBySlug(slug, currentLang, mdxComponents);
 
   if (!post) return { title: 'Post Not Found' };
 
@@ -48,9 +52,13 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   };
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function BlogPostPage({ params, searchParams }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug, mdxComponents);
+  const { lang } = await searchParams;
+  const currentLang = (lang === 'vi' ? 'vi' : 'en') as 'vi' | 'en';
+
+  const post = await getPostBySlug(slug, currentLang, mdxComponents);
+  const availableLanguages = getAvailableLanguages(slug);
 
   if (!post) notFound();
 
@@ -83,6 +91,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
 
         <h1 className="font-display text-fluid-3xl font-bold leading-tight">{fm.title}</h1>
+
+        {availableLanguages.length > 1 && (
+          <div className="mt-4 flex gap-2">
+            <Link
+              href={`/blog/${slug}`}
+              className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${currentLang === 'en' ? 'bg-brand-orange text-white' : 'bg-[var(--color-elevated)] text-[var(--color-text-secondary)] hover:bg-[var(--color-elevated-hover)]'}`}
+            >
+              English
+            </Link>
+            <Link
+              href={`/blog/${slug}?lang=vi`}
+              className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${currentLang === 'vi' ? 'bg-brand-orange text-white' : 'bg-[var(--color-elevated)] text-[var(--color-text-secondary)] hover:bg-[var(--color-elevated-hover)]'}`}
+            >
+              Tiếng Việt
+            </Link>
+          </div>
+        )}
 
         <p className="mt-3 font-body text-fluid-base text-[var(--color-text-secondary)]">
           {fm.description}

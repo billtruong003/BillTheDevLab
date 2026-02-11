@@ -34,10 +34,23 @@ function parseFrontmatter(slug: string, data: Record<string, unknown>): PostMeta
 
 export async function getPostBySlug(
   slug: string,
-  components: Record<string, React.ComponentType<Record<string, unknown>>> = {},
+  lang: 'en' | 'vi' = 'en',
+  components: Record<string, React.ComponentType<any>> = {},
 ) {
-  ensurePostsDir();
-  const filePath = path.join(POSTS_DIR, `${slug}.mdx`);
+  if (!fs.existsSync(POSTS_DIR)) {
+    fs.mkdirSync(POSTS_DIR, { recursive: true });
+  }
+  
+  let filename = `${slug}.mdx`;
+  // If Vietnamese requested, check if specific file exists
+  if (lang === 'vi') {
+    const viPath = path.join(POSTS_DIR, `${slug}.vi.mdx`);
+    if (fs.existsSync(viPath)) {
+      filename = `${slug}.vi.mdx`;
+    }
+  }
+
+  const filePath = path.join(POSTS_DIR, filename);
 
   if (!fs.existsSync(filePath)) return null;
 
@@ -73,7 +86,7 @@ export function getAllPostSlugs(): string[] {
 
   return fs
     .readdirSync(POSTS_DIR)
-    .filter((file) => file.endsWith('.mdx'))
+    .filter((file) => file.endsWith('.mdx') && !file.endsWith('.vi.mdx')) // Only count base English files as unique slugs
     .map((file) => file.replace(/\.mdx$/, ''));
 }
 
@@ -113,4 +126,15 @@ export function getAllTags(): { tag: string; count: number }[] {
   return Array.from(tagMap.entries())
     .map(([tag, count]) => ({ tag, count }))
     .sort((a, b) => b.count - a.count);
+}
+
+export function getAvailableLanguages(slug: string): ('en' | 'vi')[] {
+  ensurePostsDir();
+  const languages: ('en' | 'vi')[] = ['en'];
+  
+  if (fs.existsSync(path.join(POSTS_DIR, `${slug}.vi.mdx`))) {
+    languages.push('vi');
+  }
+  
+  return languages;
 }
