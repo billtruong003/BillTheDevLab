@@ -1,0 +1,228 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&f[]=general-sans@400,500,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #fafafa;
+    --color-elevated: #f4f4f5;
+    --color-border: #e4e4e7;
+    --color-text-primary: #1A1A2E;
+    --color-text-secondary: #4A4A5A;
+    --color-text-muted: #8A8A9A;
+    --color-brand: #FF8C42;
+    --color-accent: #52525b;
+    --color-glass: rgba(255, 255, 255, 0.95);
+  }
+
+  .dark {
+    --color-bg: #09090b;
+    --color-surface: #18181b;
+    --color-elevated: #27272a;
+    --color-border: #3f3f46;
+    --color-text-primary: #F5F5F5;
+    --color-text-secondary: #A0A0B0;
+    --color-text-muted: #6B6B7B;
+    --color-brand: #FF8C42;
+    --color-accent: #52525b;
+    --color-glass: rgba(5, 5, 5, 0.95);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'General Sans', system-ui, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection {
+    background-color: rgba(255, 140, 66, 0.3);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer components {
+  .glass-surface {
+    background: var(--color-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #FF8C42, #FFB088);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cozy-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .cozy-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: var(--color-accent);
+  }
+
+  .cozy-button-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    background: linear-gradient(135deg, #FF8C42, #FFB088);
+    color: white;
+    font-family: 'Satoshi', system-ui, sans-serif;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cozy-button-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .cozy-button-primary:active {
+    transform: translateY(0);
+  }
+
+  .cozy-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.5rem;
+    background-color: transparent;
+    color: var(--color-text-primary);
+    font-family: 'Satoshi', system-ui, sans-serif;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 1px solid var(--color-border);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .cozy-button-secondary:hover {
+    border-color: var(--color-accent);
+    background-color: var(--color-elevated);
+  }
+
+  .prose-custom h1,
+  .prose-custom h2,
+  .prose-custom h3,
+  .prose-custom h4 {
+    font-family: 'Satoshi', system-ui, sans-serif;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    scroll-margin-top: 5rem;
+  }
+
+  .prose-custom h1 { font-size: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem); margin-top: 2rem; margin-bottom: 1rem; }
+  .prose-custom h2 { font-size: clamp(1.5rem, 1.2rem + 1.5vw, 2rem); margin-top: 2rem; margin-bottom: 0.75rem; }
+  .prose-custom h3 { font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem); margin-top: 1.5rem; margin-bottom: 0.5rem; }
+
+  .prose-custom p {
+    color: var(--color-text-secondary);
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+
+  .prose-custom a {
+    color: #FF8C42;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+  }
+
+  .prose-custom a:hover {
+    color: #FFB088;
+  }
+
+  .prose-custom img {
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .prose-custom pre {
+    background-color: var(--color-elevated) !important;
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .prose-custom code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875em;
+  }
+
+  .prose-custom blockquote {
+    border-left: 3px solid #FF8C42;
+    padding-left: 1rem;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  .prose-custom ul, .prose-custom ol {
+    color: var(--color-text-secondary);
+    padding-left: 1.5rem;
+  }
+
+  .prose-custom li {
+    margin-bottom: 0.5rem;
+    line-height: 1.7;
+  }
+
+  .prose-custom hr {
+    border-color: var(--color-border);
+    margin: 2rem 0;
+  }
+
+  .prose-custom table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .prose-custom th, .prose-custom td {
+    border: 1px solid var(--color-border);
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  .prose-custom th {
+    background-color: var(--color-elevated);
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

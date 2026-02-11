@@ -1,0 +1,70 @@
+---
+title: "ECS Architecture for Indie Games"
+description: "A practical guide to Entity Component System architecture — when to use it, when to avoid it, and how to implement it cleanly in Unity."
+date: "2025-02-01"
+tags: ["architecture", "ecs", "unity", "tutorial"]
+coverImage: "/images/default-cover.jpg"
+layout: "full-width"
+featured: false
+estimatedReadTime: 8
+---
+
+# ECS Architecture for Indie Games
+
+Entity Component System is one of those patterns that's either exactly what you need or massive overkill. Let's figure out which camp your project falls into.
+
+## What Is ECS?
+
+ECS separates your game logic into three concerns:
+
+- **Entities** are just IDs — no behavior, no data
+- **Components** are pure data containers attached to entities
+- **Systems** contain all the logic, operating on entities that have specific component combinations
+
+<CodeSnippet
+  language="csharp"
+  fileName="HealthSystem.cs"
+  code={`public struct Health : IComponentData {
+    public float Current;
+    public float Max;
+}
+
+public struct DamageEvent : IComponentData {
+    public float Amount;
+    public Entity Source;
+}
+
+public partial class DamageSystem : SystemBase {
+    protected override void OnUpdate() {
+        Entities
+            .WithAll<DamageEvent>()
+            .ForEach((ref Health health, in DamageEvent dmg) => {
+                health.Current = math.max(0, health.Current - dmg.Amount);
+            })
+            .ScheduleParallel();
+    }
+}`}
+  highlightLines={[12, 13, 14, 15, 16]}
+/>
+
+## When ECS Makes Sense
+
+ECS shines when you have lots of similar entities that need to be processed in bulk. Think bullet-hell games, RTS units, particle-like systems, or simulations with thousands of agents.
+
+<Callout variant="tip" title="Rule of Thumb">
+  If your game has fewer than 500 active entities, classic OOP with MonoBehaviours is probably simpler and fast enough. ECS pays off at scale.
+</Callout>
+
+## When to Skip It
+
+For narrative games, puzzle games, or anything where entities are unique and few, ECS adds complexity without proportional benefit. A clean component architecture with ScriptableObjects often works better.
+
+<Callout variant="warning">
+  Don't adopt ECS just because it's trendy. Profile first. If your bottleneck is GPU-bound (rendering, shaders), ECS won't help — it optimizes CPU-side entity processing.
+</Callout>
+
+## Hybrid Approach
+
+My preferred pattern for indie games is a hybrid: use Unity's classic MonoBehaviour system for high-level game logic (menus, dialogue, camera) and ECS for performance-critical subsystems (projectiles, AI pathfinding, physics queries).
+
+This gives you the best of both worlds — ergonomic code where it matters, raw performance where you need it.

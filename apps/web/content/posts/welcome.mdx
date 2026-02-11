@@ -1,0 +1,54 @@
+---
+title: "Welcome to BillTheDevLab"
+description: "First post on the blog — a tour of what's here, how it works, and what's coming next in the indie game dev journey."
+date: "2025-01-15"
+tags: ["meta", "gamedev", "announcement"]
+coverImage: "/images/default-cover.jpg"
+layout: "full-width"
+featured: true
+estimatedReadTime: 4
+---
+
+# Welcome
+
+This is **BillTheDevLab** — a personal workshop where I document my journey building indie games, writing shaders, and creating digital assets.
+
+## What You'll Find Here
+
+Every post is written in MDX, which means I can embed interactive components directly into the content. Here's a quick tour of what's possible:
+
+<Callout variant="tip" title="Interactive Content">
+  This blog supports custom MDX components — callouts, code snippets with syntax highlighting, 3D model embeds, image galleries, and buy/download buttons.
+</Callout>
+
+## Code Snippets
+
+Code blocks come with syntax highlighting, line numbers, and a copy button:
+
+<CodeSnippet
+  language="glsl"
+  fileName="volumetric-fog.frag"
+  code={`uniform float u_time;
+uniform vec3 u_fogColor;
+uniform float u_density;
+
+float fogFactor(float dist) {
+  return 1.0 - exp(-u_density * dist * dist);
+}
+
+void main() {
+  float dist = length(v_worldPos - u_cameraPos);
+  float fog = fogFactor(dist);
+  vec3 color = mix(v_color, u_fogColor, fog);
+  gl_FragColor = vec4(color, 1.0);
+}`}
+  highlightLines={[6, 7]}
+/>
+
+## What's Coming
+
+I'll be posting regular devlogs, shader breakdowns, and releasing premium assets for game developers. Stay tuned.
+
+<Callout variant="info">
+  This site is open-source. The entire stack — Next.js 14, NestJS, Redis, Stripe — is available for reference.
+</Callout>

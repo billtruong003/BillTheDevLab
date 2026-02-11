@@ -1,0 +1,99 @@
+---
+title: "Volumetric Fog in Unity — A Step-by-Step Guide"
+description: "How to create atmospheric volumetric fog using ray marching in Unity's URP pipeline, from math to final shader."
+date: "2025-01-20"
+tags: ["shaders", "unity", "tutorial", "hlsl"]
+coverImage: "/images/default-cover.jpg"
+layout: "full-width"
+featured: false
+estimatedReadTime: 12
+projectSlug: "shadow-realm"
+---
+
+# Volumetric Fog in Unity
+
+Volumetric fog adds incredible depth and atmosphere to any 3D scene. In this tutorial, we'll build a ray-marching fog shader from scratch in Unity's Universal Render Pipeline.
+
+## Prerequisites
+
+Before we start, make sure you have:
+
+- Unity 2022.3+ with URP configured
+- Basic understanding of shader programming
+- A scene with at least one light source
+
+<Callout variant="warning" title="Performance Note">
+  Ray marching is computationally expensive. We'll optimize with temporal reprojection, but keep an eye on frame budget — especially on mobile.
+</Callout>
+
+## The Math Behind Fog
+
+Beer-Lambert law gives us exponential attenuation of light through a medium:
+
+<CodeSnippet
+  language="hlsl"
+  fileName="fog-math.hlsl"
+  code={`// Beer-Lambert attenuation
+float BeerLambert(float density, float distance) {
+    return exp(-density * distance);
+}
+
+// Henyey-Greenstein phase function
+float HenyeyGreenstein(float cosTheta, float g) {
+    float g2 = g * g;
+    float denom = 1.0 + g2 - 2.0 * g * cosTheta;
+    return (1.0 - g2) / (4.0 * PI * pow(denom, 1.5));
+}`}
+  highlightLines={[2, 3, 7, 8]}
+/>
+
+The **phase function** controls how light scatters through the fog. A positive `g` value creates forward scattering (brighter when looking toward the light), while negative creates back-scattering.
+
+## Ray Marching Setup
+
+We sample along each view ray, accumulating fog density:
+
+<CodeSnippet
+  language="hlsl"
+  fileName="ray-march.hlsl"
+  code={`#define MAX_STEPS 64
+#define STEP_SIZE 0.5
+
+float4 RayMarchFog(float3 rayOrigin, float3 rayDir, float maxDist) {
+    float3 accumulatedColor = 0;
+    float transmittance = 1.0;
+
+    for (int i = 0; i < MAX_STEPS; i++) {
+        float t = i * STEP_SIZE;
+        if (t > maxDist) break;
+
+        float3 pos = rayOrigin + rayDir * t;
+        float density = SampleFogDensity(pos);
+
+        if (density > 0.001) {
+            float3 lightContrib = ComputeLighting(pos);
+            float extinction = density * STEP_SIZE;
+
+            accumulatedColor += transmittance * lightContrib * (1.0 - exp(-extinction));
+            transmittance *= exp(-extinction);
+
+            if (transmittance < 0.01) break;
+        }
+    }
+
+    return float4(accumulatedColor, 1.0 - transmittance);
+}`}
+  showLineNumbers={true}
+/>
+
+<Callout variant="tip" title="Early Exit">
+  The `transmittance < 0.01` check is crucial — it lets us skip remaining steps when the fog is already opaque, giving a significant performance boost.
+</Callout>
+
+## Results
+
+The final shader creates natural-looking volumetric fog that responds to scene lighting and can be art-directed with noise textures for variation.
+
+## Next Steps
+
+In the next post, we'll add **temporal reprojection** to reuse data from previous frames, cutting the cost by 4x without visible quality loss.

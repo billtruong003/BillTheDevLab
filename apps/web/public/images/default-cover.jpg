@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16161D"/>
+      <stop offset="100%" style="stop-color:#2A2A35"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF8C42"/>
+      <stop offset="100%" style="stop-color:#A78BFA"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="200" cy="150" r="120" fill="#FF8C42" opacity="0.08"/>
+  <circle cx="1000" cy="480" r="160" fill="#A78BFA" opacity="0.08"/>
+  <text x="600" y="300" text-anchor="middle" font-family="system-ui,sans-serif" font-size="48" font-weight="700" fill="url(#accent)">BillTheDevLab</text>
+  <text x="600" y="360" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" fill="#6B6B7B">Game Dev • Shaders • Assets</text>
+</svg>
